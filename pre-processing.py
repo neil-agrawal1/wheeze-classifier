@@ -3,22 +3,15 @@ import numpy as np
 import pandas as pd
 from scipy.signal import butter, filtfilt
 
+with wave.open("single_wheeze_inspire.wav", 'rb') as wav_file:
+    num_channels = wav_file.getnchannels()
+    sample_width = wav_file.getsampwidth()
+    frame_rate = wav_file.getframerate()
+    num_frames = wav_file.getnframes()
+    duration = num_frames / frame_rate
 
-#fs = 3000;
-#sample_width = 2 (depending on number of bytes for resolution, 8-bit, 16-bit, etc)
-#channels = 1
+    frames = wav_file.readframes(num_frames)
 
-with open("audio.bin", "rb") as f:
-    audio_data = f.read()
-
-
-with wave.open("output_audio.wav", "w") as wav_file:
-    wav_file.setnchannels(channels)
-    wav_file.setsampwidth(sample_width)
-    wav_file.setframerate(fs)
-    wav_file.writeframes(audio_data)
-
-audio = np.frombuffer(audio_data, dtype=np.int16)
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs  # Nyquist frequency
