@@ -52,8 +52,8 @@ def process_data(file_path, type):
     magnitude = np.abs(fft_values)
 
 
-    band_width = 40
-    max_freq = 1600
+    band_width = 10 # this was originally 40 Hz
+    max_freq = 500  # this was originally 1600 Hz, just playing around with it though
     num_bands = int(max_freq / band_width)
     band_areas = []
     band_centers = []
