@@ -6,9 +6,7 @@ import os
 from processing import process_data;
 import pandas as pd
 
-folder_path = 'normal_wavfiles'
-
-output_csv = "output.csv"
+folder_path = 'database_normal_wavfiles'
 dataframes = []
 
 for file_name in os.listdir(folder_path): 
@@ -17,7 +15,7 @@ for file_name in os.listdir(folder_path):
         df = process_data(file_path, "NW")
         dataframes.append(df)
 
-folder_path = 'wheeze_wavfiles'
+folder_path = 'database_wheeze_wavfiles'
 
 for file_name in os.listdir(folder_path): 
     if file_name.endswith(".wav"): 
