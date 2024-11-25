@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from scipy.signal import butter, filtfilt
 import matplotlib.pyplot as plt
+import soundfile as sf
 
 def process_data(file_path, type): 
     def butter_bandpass(lowcut, highcut, fs, order=5):
@@ -30,6 +31,12 @@ def process_data(file_path, type):
         b, a = butter(order, normal_cutoff, btype='high', analog=False)
         return filtfilt(b, a, data)
 
+    def convert_to_mono(file_path):
+        audio_data, sample_rate = sf.read(file_path)
+        if audio_data.ndim > 1:
+            audio_data = audio_data.mean(axis=1)
+        return audio_data
+
 
     with wave.open(file_path, 'rb') as wav_file:
         num_channels = wav_file.getnchannels()
@@ -40,10 +47,9 @@ def process_data(file_path, type):
         frames = wav_file.readframes(num_frames)
 
     audio_data = np.frombuffer(frames, dtype=np.int16)
-
+    audio_data = convert_to_mono(file_path)
     audio_data = high_pass_filter(audio_data, 7.5, fs, 1)
-    audio_data = low_pass_filter(audio_data, (fs/2)-100, fs, 8)
-    audio_data = bandpass_filter(audio_data, 80, 1600, fs, 4)
+    audio_data = bandpass_filter(audio_data, 80, 500, fs, 4)
 
     fft_values = np.fft.fft(audio_data)
     fft_freq = np.fft.fftfreq(len(audio_data), 1/fs)  # Frequency values for the x-axis
@@ -52,8 +58,8 @@ def process_data(file_path, type):
     magnitude = np.abs(fft_values)
 
 
-    band_width = 10 # this was originally 40 Hz
-    max_freq = 500  # this was originally 1600 Hz, just playing around with it though
+    band_width = 40 # this was originally 40 Hz
+    max_freq = 1600  # this was originally 1600 Hz, just playing around with it though
     num_bands = int(max_freq / band_width)
     band_areas = []
     band_centers = []
